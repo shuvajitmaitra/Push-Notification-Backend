@@ -12,10 +12,12 @@ admin.initializeApp({
 const app = express();
 app.use(bodyParser.json());
 
-// Endpoint to save the device token
-app.post("/save-token", (req, res) => {
+app.get("/*", (req, res) => {
+  res.status(200).send({ message: "Backend is running 2" });
+});
+
+app.post("/v2/save-device-token", (req, res) => {
   const { token } = req.body;
-  // Save the token to your database (e.g., in-memory array for simplicity)
   if (!global.tokens) {
     global.tokens = [];
   }
@@ -28,7 +30,7 @@ app.post("/save-token", (req, res) => {
 });
 
 // Endpoint to send a push notification
-app.post("/send-notification", (req, res) => {
+app.post("/api/send-notification", (req, res) => {
   const { token, message } = req.body;
   console.log(global.tokens);
   const payload = {
