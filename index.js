@@ -16,7 +16,7 @@ app.get("/*", (req, res) => {
   res.status(200).send({ message: "Backend is running 2" });
 });
 
-app.post("/v2/save-device-token", (req, res) => {
+app.post("/user/save-device-token/v2", (req, res) => {
   const { token } = req.body;
   if (!global.tokens) {
     global.tokens = [];
