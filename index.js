@@ -34,6 +34,23 @@ app.post("/api/send-notification", async (req, res) => {
   try {
     const { token, message, data } = req.body;
 
+    //res.body data...........
+    // {
+    //   "token": "fKN31vVvTjuhuPKKb3EDGK:APA91bFpi1lusHTJnD9BPFF8gZ8KUeWJ3mziLX7gVI2a9E9JRJJ87SShdTdtcBezLH8VfmlNoatpkVa4TbxvACv2nX0phORIhfNVu65atR6Osax3Rv4MxDA",
+    //    "message": {
+    //     "title": "shuvajit",
+    //     "body": "Test Notification from a real device"
+    //   },
+    //   "data":{
+    //   "name": "Mitul Das",
+    //   "chatId": "65b88a159a049b00190b3f30",
+    //   "parentMessage": "undefined",
+    //   "image": "https://ts4uportal-all-files-upload.nyc3.digitaloceanspaces.com/1726243868288-MY_PIC.JPEG",
+    //   "path": "message",
+    //   "messageId": "676a4614778b08001af097f6"
+    //  }
+    // }
+
     if (!token) {
       return res.status(400).send({ error: "Device token is required." });
     }
@@ -48,9 +65,8 @@ app.post("/api/send-notification", async (req, res) => {
     // Construct the data-only payload
     const payload = {
       data: {
-        title: message.title || "Default Title",
-        body: message.body || "Default Body",
         ...data,
+        ...message,
       },
       token: token,
       android: {
@@ -59,17 +75,18 @@ app.post("/api/send-notification", async (req, res) => {
       },
       apns: {
         headers: {
-          "apns-priority": "10",
+          "apns-push-type": "background",
+          "apns-priority": "5",
+          "apns-topic": "com.schoolshub.ai",
         },
         payload: {
           aps: {
-            "content-available": 1,
+            contentAvailable: true,
           },
         },
       },
     };
 
-    // Send the message using Firebase Admin SDK
     const response = await admin.messaging().send(payload);
     console.log("Successfully sent message:", response);
     res.status(200).send({ message: "Notification sent successfully", messageId: response });
