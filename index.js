@@ -30,28 +30,52 @@ app.post("/user/save-device-token/v2", (req, res) => {
 });
 
 // Endpoint to send a push notification
-app.post("/api/send-notification", (req, res) => {
-  const { token, message } = req.body;
-  console.log(global.tokens);
-  const payload = {
-    notification: {
-      title: message.title || "Default Title",
-      body: message.body || "Default Body",
-    },
-    token: token,
-  };
+app.post("/api/send-notification", async (req, res) => {
+  try {
+    const { token, message } = req.body;
 
-  admin
-    .messaging()
-    .send(payload)
-    .then((response) => {
-      console.log("Successfully sent message:", response);
-      res.status(200).send({ message: "Notification sent successfully" });
-    })
-    .catch((error) => {
-      console.error("Error sending notification:", error);
-      res.status(500).send({ error: "Failed to send notification" });
-    });
+    if (!token) {
+      return res.status(400).send({ error: "Device token is required." });
+    }
+
+    if (!message) {
+      return res.status(400).send({ error: "Message content is required." });
+    }
+
+    // Construct the data-only payload
+    const payload = {
+      data: {
+        title: message.title || "Default Title",
+        body: message.body || "Default Body",
+        chatId: message.chatId || "", // Include any additional data you need
+        path: message.path || "DefaultPath", // For navigation purposes
+        // Add other custom data fields as needed
+      },
+      token: token,
+      android: {
+        priority: "high",
+        ttl: 60 * 60 * 24,
+      },
+      apns: {
+        headers: {
+          "apns-priority": "10",
+        },
+        payload: {
+          aps: {
+            "content-available": 1,
+          },
+        },
+      },
+    };
+
+    // Send the message using Firebase Admin SDK
+    const response = await admin.messaging().send(payload);
+    console.log("Successfully sent message:", response);
+    res.status(200).send({ message: "Notification sent successfully", messageId: response });
+  } catch (error) {
+    console.error("Error sending notification:", error);
+    res.status(500).send({ error: "Failed to send notification", details: error.message });
+  }
 });
 
 // Start the server
