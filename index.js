@@ -32,7 +32,7 @@ app.post("/user/save-device-token/v2", (req, res) => {
 // Endpoint to send a push notification
 app.post("/api/send-notification", async (req, res) => {
   try {
-    const { token, message } = req.body;
+    const { token, message, data } = req.body;
 
     if (!token) {
       return res.status(400).send({ error: "Device token is required." });
@@ -41,15 +41,16 @@ app.post("/api/send-notification", async (req, res) => {
     if (!message) {
       return res.status(400).send({ error: "Message content is required." });
     }
+    if (!data) {
+      return res.status(400).send({ error: "No data available, Need to send data from frontend." });
+    }
 
     // Construct the data-only payload
     const payload = {
       data: {
         title: message.title || "Default Title",
         body: message.body || "Default Body",
-        chatId: message.chatId || "", // Include any additional data you need
-        path: message.path || "DefaultPath", // For navigation purposes
-        // Add other custom data fields as needed
+        ...data,
       },
       token: token,
       android: {
