@@ -55,10 +55,10 @@ app.post("/api/send-notification", async (req, res) => {
       return res.status(400).send({ error: "Device token is required." });
     }
 
-    if (!message) {
+    if (!payload.data.body) {
       return res.status(400).send({ error: "Message content is required." });
     }
-    if (!data) {
+    if (!payload.data) {
       return res.status(400).send({ error: "No data available, Need to send data from frontend." });
     }
 
