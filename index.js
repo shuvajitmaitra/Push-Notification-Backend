@@ -32,7 +32,7 @@ app.post("/user/save-device-token/v2", (req, res) => {
 // Endpoint to send a push notification
 app.post("/api/send-notification", async (req, res) => {
   try {
-    const { token, message, data } = req.body;
+    const { token, payload } = req.body;
 
     //res.body data...........
     // {
@@ -63,29 +63,30 @@ app.post("/api/send-notification", async (req, res) => {
     }
 
     // Construct the data-only payload
-    const payload = {
-      data: {
-        ...data,
-        ...message,
-      },
-      token: token,
-      android: {
-        priority: "high",
-        ttl: 60 * 60 * 24,
-      },
-      apns: {
-        headers: {
-          "apns-push-type": "background",
-          "apns-priority": "5",
-          "apns-topic": "com.schoolshub.ai",
-        },
-        payload: {
-          aps: {
-            contentAvailable: true,
-          },
-        },
-      },
-    };
+    // const payload = {
+    //   data: {
+    //     ...data,
+    //     ...message,
+    //   },
+    //   token: token,
+    //   android: {
+    //     priority: "high",
+    //     ttl: 60 * 60 * 24,
+    //   },
+    //   apns: {
+    //     headers: {
+    //       "apns-push-type": "background",
+    //       "apns-priority": "5",
+    //       "apns-topic": "com.schoolshub.ai",
+    //     },
+    //     payload: {
+    //       aps: {
+    //         "content-available": true,
+    //         // contentAvailable: true,
+    //       },
+    //     },
+    //   },
+    // };
 
     const response = await admin.messaging().send(payload);
     console.log("Successfully sent message:", response);
