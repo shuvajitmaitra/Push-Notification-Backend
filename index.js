@@ -33,7 +33,7 @@ app.post("/user/save-device-token/v2", (req, res) => {
 app.post("/api/send-notification", async (req, res) => {
   try {
     const { token, payload } = req.body;
-
+    console.log(req.body);
     //res.body data...........
     // {
     //   "token": "fKN31vVvTjuhuPKKb3EDGK:APA91bFpi1lusHTJnD9BPFF8gZ8KUeWJ3mziLX7gVI2a9E9JRJJ87SShdTdtcBezLH8VfmlNoatpkVa4TbxvACv2nX0phORIhfNVu65atR6Osax3Rv4MxDA",
@@ -51,16 +51,16 @@ app.post("/api/send-notification", async (req, res) => {
     //  }
     // }
 
-    if (!token) {
-      return res.status(400).send({ error: "Device token is required." });
-    }
+    // if (!token) {
+    //   return res.status(400).send({ error: "Device token is required." });
+    // }
 
-    if (!payload.data.body) {
-      return res.status(400).send({ error: "Message content is required." });
-    }
-    if (!payload.data) {
-      return res.status(400).send({ error: "No data available, Need to send data from frontend." });
-    }
+    // if (!payload.data.body) {
+    //   return res.status(400).send({ error: "Message content is required." });
+    // }
+    // if (!payload.data) {
+    //   return res.status(400).send({ error: "No data available, Need to send data from frontend." });
+    // }
 
     // Construct the data-only payload
     // const payload = {
